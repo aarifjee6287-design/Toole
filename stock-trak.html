@@ -276,7 +276,23 @@
         }
         
         .submit-btn:hover {
-            background-color: #2980b9;
+            background-color: #2980b9;<!-- HTML part -->
+<div class="form-group">
+    <label for="company">Company Name</label>
+    <input type="text" id="company" name="company" list="company-list" 
+           placeholder="Start typing company name..." autocomplete="off">
+    <datalist id="company-list">
+        <!-- Ye companies aap backend se ya database se fetch kar sakte hain -->
+        <option value="Tech Solutions Inc.">
+        <option value="Innovate Corp">
+        <option value="Digital Systems Ltd">
+        <option value="Future Tech">
+        <option value="Global Enterprises">
+        <option value="Softwares R Us">
+        <option value="Data Analytics Co">
+        <option value="Cloud Services LLC">
+    </datalist>
+</div>
         }
         
         /* Results Table */
