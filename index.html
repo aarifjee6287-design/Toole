@@ -242,7 +242,552 @@
         
         .hero .btn-outline:hover {
             background-color: white;
+            color: var(--primary);<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Search Analytics - NSE Financial Results</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #dc2626;
+            --success: #059669;
+            --gray: #6b7280;
+            --light-gray: #f3f4f6;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 64, 175, 0.05) 100%);
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: #4b5563;
+            max-width: 800px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Search Box */
+        .search-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            margin-top: 2rem;
+            max-width: 1000px;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-header h2 {
+            font-size: 1.5rem;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-header h2 i {
+            font-size: 1.2rem;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem 1.25rem 3.5rem;
+            font-size: 1.1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: var(--border-radius);
+            background: white;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background-color 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .suggestion-item.active {
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary);
+        }
+
+        .company-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .company-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .company-symbol {
+            font-size: 0.9rem;
+        color: var(--gray);
+        }
+
+        .search-count {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            background: #eff6ff;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        /* Search Results */
+        .search-results {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .result-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .result-details {
+            background: #f8fafc;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item h4 {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* Buttons */
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-search {
+            width: 100%;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        /* Recent Searches */
+        .recent-searches {
+            margin-top: 3rem;
+        }
+
+        .recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .recent-header h3 {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .recent-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .recent-item {
+            background: white;
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .recent-item:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .search-section {
+                padding: 1.5rem;
+            }
+
+            .result-stats {
+                flex-wrap: wrap;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Track Investor Search Patterns for NSE Financial Results</h1>
+            <p>Discover which companies investors are researching based on financial results data. Get real-time analytics, generate tracking links, and make data-driven investment decisions.</p>
+            
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-header">
+                    <h2>🔍 Search Company Analytics</h2>
+                    <div class="search-count" id="total-companies">Tracking 250+ NSE Companies</div>
+                </div>
+                
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <div class="search-icon">📈</div>
+                        <input type="text" 
+                               class="search-input" 
+                               id="company-search"
+                               placeholder="Search for any NSE company (e.g., Reliance, TCS, Infosys, HDFC Bank...)"
+                               autocomplete="off">
+                    </div>
+                    
+                    <div class="suggestions-dropdown" id="suggestions"></div>
+                </div>
+                
+                <button class="btn btn-primary btn-search" id="search-btn">
+                    <span>🔍 Search Analytics</span>
+                </button>
+                
+                <!-- Search Results -->
+                <div class="search-results" id="search-results">
+                    <div class="result-header">
+                        <h2 class="result-title" id="result-company-name">Company Name</h2>
+                        <div class="result-stats">
+                            <div class="stat">
+                                <div class="stat-value" id="total-searches">0</div>
+                                <div class="stat-label">Total Searches</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="unique-investors">0</div>
+                                <div class="stat-label">Unique Investors</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="actual-investors">0</div>
+                                <div class="stat-label">Actual Investors</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-details">
+                        <div class="detail-row">
+                            <div class="detail-item">
+                                <h4>NSE Symbol</h4>
+                                <p id="company-symbol">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>Sector</h4>
+                                <p id="company-sector">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>Market Cap</h4>
+                                <p id="market-cap">-</p>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-item">
+                                <h4>Search Trend</h4>
+                                <p id="search-trend">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>Conversion Rate</h4>
+                                <p id="conversion-rate">-</p>
+                            </div>
+                            <div class="detail-item">
+                                <h4>Last Updated</h4>
+                                <p id="last-updated">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-buttons" style="margin-top: 2rem;">
+                        <a href="stock-trak.html" class="btn btn-primary">📊 View Detailed Analytics</a>
+                        <button class="btn btn-outline" id="generate-link">🔗 Generate Tracking Link</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Searches -->
+            <div class="recent-searches">
+                <div class="recent-header">
+                    <h3>📈 Popular Companies</h3>
+                    <span class="search-count">Updated today</span>
+                </div>
+                <div class="recent-list" id="popular-companies"></div>
+            </div>
+            
+            <div class="hero-buttons">
+                <a href="stock-trak.html" class="btn btn-primary">🚀 Launch Analytics Tool</a>
+                <a href="#how-it-works" class="btn btn-outline">❓ How It Works</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Sample company database
+        const companies = [
+            { name: "Reliance Industries Ltd.", symbol: "RELIANCE", sector: "Energy", searches: 1250, investors: 890, actualInvestors: 345, marketCap: "₹15.2T", trend: "▲ 12%", conversion: "27.6%" },
+            { name: "Tata Consultancy Services Ltd.", symbol: "TCS", sector: "IT Services", searches: 980, investors: 720, actualInvestors: 278, marketCap: "₹13.8T", trend: "▼ 5%", conversion: "28.4%" },
+            { name: "Infosys Ltd.", symbol: "INFY", sector: "IT Services", searches: 1150, investors: 810, actualInvestors: 312, marketCap: "₹6.5T", trend: "▲ 8%", conversion: "27.1%" },
+            { name: "HDFC Bank Ltd.", symbol: "HDFCBANK", sector: "Banking", searches: 850, investors: 650, actualInvestors: 234, marketCap: "₹11.2T", trend: "↔ 2%", conversion: "27.5%" },
+            { name: "ICICI Bank Ltd.", symbol: "ICICIBANK", sector: "Banking", searches: 920, investors: 680, actualInvestors: 256, marketCap: "₹7.1T", trend: "▲ 6%", conversion: "27.8%" },
+            { name: "State Bank of India", symbol: "SBIN", sector: "Banking", searches: 780, investors: 590, actualInvestors: 198, marketCap: "₹5.8T", trend: "▲ 9%", conversion: "25.4%" },
+            { name: "Bajaj Finance Ltd.", symbol: "BAJFINANCE", sector: "Financial Services", searches: 750, investors: 520, actualInvestors: 198, marketCap: "₹4.3T", trend: "▲ 15%", conversion: "26.4%" },
+            { name: "Bharti Airtel Ltd.", symbol: "BHARTIARTL", sector: "Telecom", searches: 680, investors: 480, actualInvestors: 156, marketCap: "₹6.7T", trend: "▲ 7%", conversion: "22.9%" },
+            { name: "Larsen & Toubro Ltd.", symbol: "LT", sector: "Infrastructure", searches: 620, investors: 450, actualInvestors: 142, marketCap: "₹4.1T", trend: "▲ 11%", conversion: "23.0%" },
+            { name: "Hindustan Unilever Ltd.", symbol: "HINDUNILVR", sector: "FMCG", searches: 590, investors: 420, actualInvestors: 138, marketCap: "₹5.9T", trend: "▼ 3%", conversion: "23.4%" },
+            { name: "ITC Ltd.", symbol: "ITC", sector: "FMCG", searches: 550, investors: 380, actualInvestors: 124, marketCap: "₹4.8T", trend: "▲ 4%", conversion: "22.5%" },
+            { name: "Asian Paints Ltd.", symbol: "ASIANPAINT", sector: "Paints", searches: 520, investors: 350, actualInvestors: 112, marketCap: "₹3.1T", trend: "▲ 8%", conversion: "21.5%" },
+            { name: "Wipro Ltd.", symbol: "WIPRO", sector: "IT Services", searches: 480, investors: 320, actualInvestors: 98, marketCap: "₹2.4T", trend: "▼ 6%", conversion: "20.4%" },
+            { name: "Axis Bank Ltd.", symbol: "AXISBANK", sector: "Banking", searches: 450, investors: 310, actualInvestors: 92, marketCap: "₹3.2T", trend: "▲ 5%", conversion: "20.4%" },
+            { name: "Maruti Suzuki India Ltd.", symbol: "MARUTI", sector: "Automobile", searches: 420, investors: 290, actualInvestors: 86, marketCap: "₹3.4T", trend: "▲ 10%", conversion: "20.5%" },
+            { name: "Sun Pharmaceutical Industries Ltd.", symbol: "SUNPHARMA", sector: "Pharmaceuticals", searches: 390, investors: 270, actualInvestors: 78, marketCap: "₹2.9T", trend: "▲ 7%", conversion: "20.0%" },
+            { name: "NTPC Ltd.", symbol: "NTPC", sector: "Power", searches: 360, investors: 250, actualInvestors: 72, marketCap: "₹2.7T", trend: "▲ 12%", conversion: "19.4%" },
+            { name: "Power Grid Corporation of India Ltd.", symbol: "POWERGRID", sector: "Power", searches: 340, investors: 230, actualInvestors: 68, marketCap: "₹2.1T", trend: "▲ 9%", conversion: "19.4%" },
+            { name: "UltraTech Cement Ltd.", symbol: "ULTRACEMCO", sector: "Cement", searches: 320, investors: 220, actualInvestors: 64, marketCap: "₹2.6T", trend: "▲ 8%", conversion: "19.0%" },
+            { name: "Adani Enterprises Ltd.", symbol: "ADANIENT", sector: "Conglomerate", searches: 300, investors: 210, actualInvestors: 62, marketCap: "₹2.8T", trend: "▲ 14%", conversion: "18.7%" }
+        ];
+
+        // DOM Elements
+        const searchInput = document.getElementById('company-search');
+        const suggestions = document.getElementById('suggestions');
+        const searchBtn = document.getElementById('search-btn');
+        const searchResults = document.getElementById('search-results');
+        const popularCompanies = document.getElementById('popular-companies');
+
+        // Popular companies display
+        function displayPopularCompanies() {
+            const popular = companies.slice(0, 6);
+            popularCompanies.innerHTML = popular.map(company => `
+                <div class="recent-item" data-company="${company.name}">
+                    <div class="company-info">
+                        <div class="company-name">${company.name}</div>
+                        <div class="company-symbol">${company.symbol}</div>
+                    </div>
+                    <div class="search-count">${company.searches} searches</div>
+                </div>
+            `).join('');
+        }
+
+        // Search suggestions
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            suggestions.innerHTML = '';
+       
         }
         
         /* Features Section */
