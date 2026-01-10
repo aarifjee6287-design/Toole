@@ -6,7 +6,7 @@
     <title>NSE Financial Results Investor Search Tracker | Real-time Analytics</title>
     <meta name="description" content="Track investor search patterns for NSE companies based on financial results data. Get real-time analytics on which companies investors are researching.">
     <meta name="keywords" content="NSE, financial results, investor search, stock market, NSE companies, investor analytics, market research">
-    <meta name="author" content="NSE Analytics">
+    <meta name="aarif ali" content="NSE Analytics">
     
     <!-- Open Graph for better social sharing -->
     <meta property="og:title" content="NSE Financial Results Investor Search Tracker">
@@ -345,7 +345,461 @@
         }
         
         .trend-neutral {
+            color: var(--gray);<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Search Dashboard</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --gray: #95a5a6;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Results Table */
+        .results-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: white;
+            text-align: left;
+            padding: 1rem;
+            font-weight: 500;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .company-name {
+            font-weight: 500;
+            color: var(--primary);
+        }
+        
+        .search-count {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .trend-up {
+            color: var(--success);
+        }
+        
+        .trend-down {
+            color: var(--accent);
+        }
+        
+        .trend-neutral {
             color: var(--gray);
+        }
+
+        /* Additional CSS for investor names */
+        .investor-names {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+
+        .investor-names:hover {
+            white-space: normal;
+            overflow: visible;
+            background-color: white;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            position: absolute;
+            max-height: 200px;
+            overflow-y: auto;
+            min-width: 250px;
+            max-width: 400px;
+            border: 1px solid #ddd;
+        }
+
+        .investor-names:hover::after {
+            content: "Total Investors: " attr(data-total);
+            display: block;
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        /* Stats Summary */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: var(--gray);
+            margin: 0 0 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .stat-card .subtext {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .results-container {
+                padding: 1rem;
+            }
+            
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 1rem;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            border-radius: 4px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📈 Investor Search Analytics Dashboard</h1>
+        <p>Track company searches, investor interest, and actual investments</p>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>Total Companies Tracked</h3>
+            <p class="number">24</p>
+            <p class="subtext">Across NSE & BSE</p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Searches</h3>
+            <p class="number">8,450</p>
+            <p class="subtext">This month</p>
+        </div>
+        <div class="stat-card">
+            <h3>Unique Investors</h3>
+            <p class="number">3,250</p>
+            <p class="subtext">Active users</p>
+        </div>
+        <div class="stat-card">
+            <h3>Conversion Rate</h3>
+            <p class="number">31.4%</p>
+            <p class="subtext">Search to investment</p>
+        </div>
+    </div>
+
+    <div class="results-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>
+                        <span class="tooltip">
+                            Total Searches
+                            <span class="tooltip-text">Total number of times investors searched for this company</span>
+                        </span>
+                    </th>
+                    <th>
+                        <span class="tooltip">
+                            Unique Investors
+                            <span class="tooltip-text">Number of different investors who searched</span>
+                        </span>
+                    </th>
+                    <th>Investors Names</th>
+                    <th>
+                        <span class="tooltip">
+                            Actual Investors
+                            <span class="tooltip-text">Investors who actually invested money</span>
+                        </span>
+                    </th>
+                    <th>Search Trend</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="company-name">Reliance Industries Ltd.</td>
+                    <td class="search-count">1,250</td>
+                    <td class="search-count">890</td>
+                    <td>
+                        <div class="investor-names" data-total="890">
+                            Amit Sharma, Priya Patel, Raj Kumar, Sneha Verma, 
+                            Vikram Singh, Arjun Mehta, Neha Reddy, Sanjay Gupta, 
+                            Pooja Singh, Rohit Mishra, Anjali Desai, Karan Malhotra, 
+                            Meera Nair, Rahul Joshi, Simran Kaur, Vikas Rao, 
+                            Ananya Das, Rohan Sharma, Divya Patel, Sameer Kumar...
+                        </div>
+                    </td>
+                    <td class="search-count">345</td>
+                    <td>
+                        <span class="trend-up">▲ 12%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="company-name">TCS Ltd.</td>
+                    <td class="search-count">980</td>
+                    <td class="search-count">720</td>
+                    <td>
+                        <div class="investor-names" data-total="720">
+                            Rohit Mehta, Anjali Desai, Karan Malhotra, 
+                            Neha Gupta, Ravi Verma, Sneha Sharma, Raj Patel, 
+                            Priya Singh, Arjun Reddy, Sanjay Kumar, Meera Iyer, 
+                            Vikram Joshi, Ananya Kaur, Rahul Das, Simran Rao, 
+                            Vikas Mishra, Divya Gupta, Sameer Sharma, Pooja Patel...
+                        </div>
+                    </td>
+                    <td class="search-count">278</td>
+                    <td>
+                        <span class="trend-down">▼ 5%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="company-name">Infosys Ltd.</td>
+                    <td class="search-count">1,150</td>
+                    <td class="search-count">810</td>
+                    <td>
+                        <div class="investor-names" data-total="810">
+                            Sanjay Patel, Meera Reddy, Arjun Nair, 
+                            Pooja Iyer, Raj Sharma, Sneha Gupta, Amit Verma, 
+                            Priya Kumar, Vikram Desai, Neha Malhotra, Rohit Joshi, 
+                            Anjali Kaur, Karan Rao, Rahul Das, Simran Mishra, 
+                            Vikas Gupta, Ananya Sharma, Rohan Patel, Divya Singh...
+                        </div>
+                    </td>
+                    <td class="search-count">312</td>
+                    <td>
+                        <span class="trend-up">▲ 8%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="company-name">HDFC Bank Ltd.</td>
+                    <td class="search-count">850</td>
+                    <td class="search-count">650</td>
+                    <td>
+                        <div class="investor-names" data-total="650">
+                            Rahul Joshi, Simran Kaur, Vikas Rao, 
+                            Ananya Das, Raj Sharma, Priya Verma, Amit Patel, 
+                            Sneha Reddy, Arjun Gupta, Meera Singh, Rohit Kumar, 
+                            Neha Desai, Karan Malhotra, Sanjay Nair, Pooja Iyer, 
+                            Vikram Joshi, Anjali Das, Sameer Sharma, Divya Patel...
+                        </div>
+                    </td>
+                    <td class="search-count">234</td>
+                    <td>
+                        <span class="trend-neutral">↔ 2%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="company-name">ICICI Bank Ltd.</td>
+                    <td class="search-count">920</td>
+                    <td class="search-count">680</td>
+                    <td>
+                        <div class="investor-names" data-total="680">
+                            Vikram Singh, Priya Sharma, Raj Verma, Sneha Patel, 
+                            Amit Kumar, Neha Gupta, Arjun Reddy, Meera Joshi, 
+                            Rohit Das, Anjali Rao, Karan Mishra, Sanjay Kaur, 
+                            Pooja Sharma, Rahul Patel, Simran Singh, Vikas Gupta...
+                        </div>
+                    </td>
+                    <td class="search-count">256</td>
+                    <td>
+                        <span class="trend-up">▲ 6%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="company-name">Bajaj Finance Ltd.</td>
+                    <td class="search-count">750</td>
+                    <td class="search-count">520</td>
+                    <td>
+                        <div class="investor-names" data-total="520">
+                            Neha Patel, Raj Sharma, Amit Verma, Priya Reddy, 
+                            Sneha Kumar, Arjun Gupta, Meera Singh, Rohit Joshi, 
+                            Anjali Das, Karan Rao, Sanjay Mishra, Pooja Kaur, 
+                            Vikram Sharma, Rahul Patel, Simran Singh...
+                        </div>
+                    </td>
+                    <td class="search-count">198</td>
+                    <td>
+                        <span class="trend-up">▲ 15%</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>Data updated: December 2024 | Source: NSE/BSE Investor Analytics</p>
+        <p>© 2024 Investor Search Dashboard. All rights reserved.</p>
+    </div>
+
+    <script>
+        // Add hover functionality for investor names
+        document.addEventListener('DOMContentLoaded', function() {
+            const investorNames = document.querySelectorAll('.investor-names');
+            
+            investorNames.forEach(name => {
+                name.addEventListener('mouseenter', function(e) {
+                    // Prevent multiple tooltips
+                    document.querySelectorAll('.investor-names').forEach(el => {
+                        if (el !== this) {
+                            el.style.whiteSpace = 'nowrap';
+                            el.style.overflow = 'hidden';
+                            el.style.position = 'relative';
+                        }
+                    });
+                });
+            });
+
+            // Add click to copy functionality
+            investorNames.forEach(name => {
+                name.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        const text = this.textContent;
+                        navigator.clipboard.writeText(text)
+                            .then(() => {
+                                const originalText = this.innerHTML;
+                                this.innerHTML = '✓ Copied to clipboard!';
+                                this.style.backgroundColor = '#27ae60';
+                                this.style.color = 'white';
+                                
+                                setTimeout(() => {
+                                    this.innerHTML = originalText;
+                                    this.style.backgroundColor = '';
+                                    this.style.color = '';
+                                }, 1500);
+                            });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
         }
         
         /* Footer */
